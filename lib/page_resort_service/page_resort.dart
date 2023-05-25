@@ -94,7 +94,7 @@ class _ResortPageState extends State<ResortPage> {
                             flex: 3,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(30),
-                              child: Image.network("${list[index].resortService!.anh}", width: 350, fit: BoxFit.cover),
+                              child: Image.network(list[index].resortService.anh[0], width: 350, fit: BoxFit.cover),
                             ),
                           ),
                           Expanded(

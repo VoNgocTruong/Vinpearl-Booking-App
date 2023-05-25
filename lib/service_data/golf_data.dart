@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 class GolfService {
-  String anh, diaChi, email, gia, maDV, moTa, sdt, tenDV, xepLoai;
-
+  String diaChi, email, gia, maDV, moTa, sdt, tenDV, xepLoai;
+  List<dynamic> anh;
   GolfService({
     required this.anh,
     required this.diaChi,
@@ -29,7 +29,7 @@ class GolfService {
 
   factory GolfService.fromJson(Map<String, dynamic> map) {
     return GolfService(
-      anh: map['anh'] as String,
+      anh: map['anh'] as List<dynamic>,
       diaChi: map['diaChi'] as String,
       email: map['email'] as String,
       gia: map['gia'] as String,

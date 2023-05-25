@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
@@ -8,6 +9,8 @@ import 'package:vinpearl_app/page_resort_service/meeting_page.dart';
 import 'package:vinpearl_app/page_resort_service/page_golf.dart';
 import 'package:vinpearl_app/page_resort_service/page_resort.dart';
 import 'package:vinpearl_app/page_resort_service/page_restaurant.dart';
+
+import '../page_search/search_page.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -44,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _openDrawer() {
     _scaffoldKey.currentState?.openDrawer();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +139,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SearchPage(),)
+          );
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(
+            Icons.search,
+            color: Colors.white,
+            size: 40,
+        ),),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 28.0),
@@ -145,46 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const Text("VINPEARL", style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.deepOrangeAccent),),
               const Text("Booking your tour", style: TextStyle(fontSize: 25),),
               const SizedBox(height: 35,),
-
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3), // Điều chỉnh hướng đổ bóng
-                    ),
-                  ],
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        // Xóa nội dung của TextField
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none, // Xóa viền biên của TextField
-                    ),
-                    filled: true,
-                    fillColor: Colors.white, // Màu nền cho TextField
-                  ),
-                  onChanged: (value) {
-                    // Xử lý khi giá trị của TextField thay đổi
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 40,),
               const Text("Categories", style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),),
-
               Container(
                 padding: const EdgeInsets.only(top: 25.0, bottom: 40.0),
                 child: Row(
@@ -411,8 +388,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 },
-              )
-
+              ),
             ],
           ),
         ),

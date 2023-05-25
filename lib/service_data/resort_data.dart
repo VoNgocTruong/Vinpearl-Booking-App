@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 class ResortService {
-  String anh, diaChi, gia, maDV, moTa, sdt, tenDV, xepLoai;
-
+  String diaChi, gia, maDV, moTa, sdt, tenDV, xepLoai;
+  List<dynamic> anh;
   ResortService({
     required this.anh,
     required this.diaChi,
@@ -28,7 +28,7 @@ class ResortService {
 
   factory ResortService.fromJson(Map<String, dynamic> map) {
     return ResortService(
-      anh: map['anh'] as String,
+      anh: map['anh'] as List<dynamic>,
       diaChi: map['diaChi'] as String,
       gia: map['gia'] as String,
       maDV: map['maDV'] as String,
