@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'detail_search_page.dart';
 
 class SearchPage extends StatefulWidget {
@@ -96,34 +95,34 @@ class _SearchPageState extends State<SearchPage> {
       ),
       body: ListView.builder(
         itemCount: resultList.length,
-          itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PageSearchDetail(searchData: resultList[index]),
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PageSearchDetail(searchData: resultList[index]),
+                ),
+              );
+            },
+            child: Column(
+                children: [
+                  ListTile(
+                    title: Text(resultList[index]['tenDV'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                    leading: SizedBox(
+                      width: 150,
+                      child: Image.network(resultList[index]['anh'][0], fit: BoxFit.cover,),
+                    ),
+                    subtitle: Text("${resultList[index]['gia']} vnđ"),
                   ),
-                );
-              },
-              child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(resultList[index]['tenDV'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                      leading: SizedBox(
-                        width: 150,
-                        child: Image.network(resultList[index]['anh'][0], fit: BoxFit.cover,),
-                      ),
-                      subtitle: Text("${resultList[index]['gia']} vnđ"),
-                    ),
-                    const Divider(
-                      height: 1,
-                      color: Colors.grey,
-                    ),
-                  ]
-              ),
-            );
-          },
+                  const Divider(
+                    height: 1,
+                    color: Colors.grey,
+                  ),
+                ]
+            ),
+          );
+        },
       ),
     );
   }

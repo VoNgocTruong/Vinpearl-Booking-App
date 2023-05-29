@@ -1,6 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vinpearl_app/service_data/golf_data.dart';
+
+import '../cart_page/cart_data.dart';
 
 class GolfPageDetail extends StatefulWidget {
   GolfServiceSnapshot golfServiceSnapshot;
@@ -28,13 +31,7 @@ class _GolfPageDetailState extends State<GolfPageDetail> {
                         enableInfiniteScroll: true,
                         autoPlay: true,
                       ),
-                      items: [
-                        "https://statics.vinpearl.com/styles/267x267/public/2022_03/534%20%C3%97%20534%20px-1%20(1)_1648712162.png.webp?itok=3qhlydUA",
-                        "https://statics.vinpearl.com/styles/267x267/public/2022_03/534%20%C3%97%20534%20px-2%20(1)_1648712167.png.webp?itok=Bq3HDuWu",
-                        "https://statics.vinpearl.com/styles/267x267/public/2022_03/534%20%C3%97%20534%20px-3%20(1)_1648712175.png.webp?itok=h7YCyWTr",
-                        "https://statics.vinpearl.com/styles/267x267/public/2022_03/534%20%C3%97%20534%20px-4%20(1)_1648712181.png.webp?itok=6vPD0Uup"
-                        // Add more image URLs here
-                      ].map((item) {
+                      items: golfServiceSnapshot!.golfService.anh.map((item) {
                         return Container(
                           padding: const EdgeInsets.only(top: 10),
                           child: ClipRRect(
@@ -74,14 +71,29 @@ class _GolfPageDetailState extends State<GolfPageDetail> {
                     Row(
                       children: [
                         //Giá
-                        Text("${golfServiceSnapshot!.golfService.gia} vnđ", style: TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 20),),
-                        SizedBox(width: 130,),
-                        Icon(Icons.star, size: 16,),
-                        Text("4.6", style: TextStyle(fontSize: 16),)
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            "${golfServiceSnapshot!.golfService.gia} vnđ",
+                            style: const TextStyle(
+                              color: Colors.orangeAccent,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22),
+                          )
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.star, size: 16, color: Colors.orangeAccent,),
+                              Text(golfServiceSnapshot!.golfService.xepLoai, style: const TextStyle(fontSize: 16, ),)
+                            ],
+                          )
+                        )
                       ],
                     ),
 
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
 
                     Text(
                       golfServiceSnapshot!.golfService.tenDV,
@@ -91,22 +103,22 @@ class _GolfPageDetailState extends State<GolfPageDetail> {
                       ),
                     ),
 
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     Row(
                       children: [
-                        Icon(Icons.phone_rounded),
-                        SizedBox(width: 5,),
-                        Text(golfServiceSnapshot!.golfService.sdt, style: TextStyle(fontSize: 16),),
+                        const Icon(Icons.phone_rounded),
+                        const SizedBox(width: 5,),
+                        Text(golfServiceSnapshot!.golfService.sdt, style: const TextStyle(fontSize: 18),),
                       ],
                     ),
 
-                    SizedBox(height: 10,),
+                    const SizedBox(height: 10,),
                     Row(
                       children: [
                         Image.asset("assets/images/maps-and-flags.png", width: 20,),
-                        SizedBox(width: 5,),
+                        const SizedBox(width: 5,),
                         Expanded(
-                            child: Text(golfServiceSnapshot!.golfService.diaChi, style: const TextStyle(fontSize: 16),))
+                            child: Text(golfServiceSnapshot!.golfService.diaChi, style: const TextStyle(fontSize: 18),))
                       ],
                     ),
                     const SizedBox(height: 10,),
@@ -114,14 +126,14 @@ class _GolfPageDetailState extends State<GolfPageDetail> {
                       children: [
                         const Icon(Icons.mail_outlined),
                         const SizedBox(width: 5,),
-                        Text(golfServiceSnapshot!.golfService.email)
+                        Text(golfServiceSnapshot!.golfService.email, style: TextStyle(fontSize: 18),)
                       ],
                     ),
 
-                    SizedBox(height: 20,),
-                    const Text("Description", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                    SizedBox(height: 10,),
-                    Text(golfServiceSnapshot!.golfService.moTa)
+                    const SizedBox(height: 20,),
+                    const Text("Description", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    const SizedBox(height: 10,),
+                    Text(golfServiceSnapshot!.golfService.moTa, style: const TextStyle(fontSize: 18),textAlign: TextAlign.justify,)
                   ],
                 ),
               ),
@@ -131,13 +143,27 @@ class _GolfPageDetailState extends State<GolfPageDetail> {
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Add service to cart logic goes here
-                    },
+                      final cartProvider = Provider.of<CartData>(context, listen: false);
+
+                      if(!cartProvider.isInCart(golfServiceSnapshot)){
+                        cartProvider.addItemToCart(golfServiceSnapshot);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Đã thêm vào giỏ hàng')
+                            )
+                        );
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text(
+                                'Dịch vụ đã có trong giỏ hàng')
+                            )
+                        );
+                      }                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Add to cart ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                        Icon(Icons.navigate_next_outlined,)
+                        const Text("Add to cart ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                        const Icon(Icons.navigate_next_outlined,)
                       ],
                     ),
                     style: ElevatedButton.styleFrom(
@@ -147,7 +173,7 @@ class _GolfPageDetailState extends State<GolfPageDetail> {
                           borderRadius: BorderRadius.circular(30)
                       ),
                       primary: Colors.orange[300],
-                      minimumSize: Size(220, 60),
+                      minimumSize: const Size(220, 60),
                     ),
                   ),
                 ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
+import 'package:vinpearl_app/cart_page/cart_data.dart';
+import 'package:vinpearl_app/cart_page/cart_page.dart';
 import 'package:vinpearl_app/page_detail/page_resort_detail.dart';
-import 'package:vinpearl_app/service_data/golf_data.dart';
 import 'package:vinpearl_app/service_data/resort_data.dart';
 
 class ResortPage extends StatefulWidget {
@@ -12,6 +14,7 @@ class ResortPage extends StatefulWidget {
 }
 
 class _ResortPageState extends State<ResortPage> {
+  List<ResortServiceSnapshot> cartItems = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,12 +25,17 @@ class _ResortPageState extends State<ResortPage> {
           actions: [
             GestureDetector(
               onTap: () {
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(),));
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: badges.Badge(
-                  position: badges.BadgePosition.topEnd(top: 1, end: 0),
+                  position: badges.BadgePosition.topEnd(top: -5, end: 0),
+                  badgeContent: Consumer<CartData>(
+                    builder: (context, value, child) {
+                      return Text("${value.cartItems.length}");
+                    },
+                  ),
                   badgeAnimation: const badges.BadgeAnimation.scale(),
                   child: const Icon(
                     Icons.shopping_cart,
@@ -74,6 +82,8 @@ class _ResortPageState extends State<ResortPage> {
                             ,)
                       );
                     },
+
+                    //Container chứ danh sách dịch vụ
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: [
@@ -87,64 +97,75 @@ class _ResortPageState extends State<ResortPage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
                       ),
+
+                      //Column hiển thị ảnh, tên dịch vụ, số điện thoại,...
                       child: Column(
                         children: [
-                          const SizedBox(height: 15,),
                           Expanded(
-                            flex: 3,
+                            flex: 4,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(30),
-                              child: Image.network(list[index].resortService.anh[0], width: 350, fit: BoxFit.cover),
+                              child: Image.network("${list[index].resortService!.anh[0]}", width: 400, fit: BoxFit.cover),
                             ),
                           ),
                           Expanded(
                               flex: 2,
-                              child: Container(
+                              child: Padding(
                                 padding: const EdgeInsets.all(7.0),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      "${list[index].resortService!.tenDV}",
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
+                                    Expanded(
+                                      child: Text(
+                                        "${list[index].resortService!.tenDV}",
+                                        style: const TextStyle(
+                                          fontSize: 19,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    const SizedBox(height: 20,),
-                                    Row(
-                                      children: [
-                                        const SizedBox(width: 70,),
-                                        const Icon(Icons.phone_rounded, color: Colors.blueAccent,),
-                                        const SizedBox(width: 5,),
-                                        Text("${list[index].resortService!.gia}",
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold
-                                          ),),
-
-                                        const SizedBox(width: 100,),
-                                        const Icon(Icons.star, color: Colors.yellow),
-                                        const SizedBox(width: 5,),
-                                        Text("${list[index].resortService!.xepLoai}",
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold
-                                          ),)
-                                      ],
-                                    ),
-                                    const SizedBox(height: 20,),
-                                    Row(
-                                      children: [
-                                        Image.asset("assets/images/maps-and-flags.png", width: 20,),
-                                        Expanded(child: Text("${list[index].resortService!.diaChi}",
-                                          style: const TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.phone_rounded, color: Colors.blueAccent,),
+                                          const SizedBox(width: 5,),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Text("${list[index].resortService!.sdt}",
+                                              style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold
+                                              ),),
                                           ),
-                                          overflow: TextOverflow.ellipsis,
-                                        ))
-                                      ],
+
+                                          const Icon(Icons.star, color: Colors.yellow),
+                                          const SizedBox(width: 5,),
+                                          Expanded(
+                                            flex: 1,
+                                            child: Text("${list[index].resortService!.xepLoai}",
+                                              style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold
+                                              ),),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Image.asset("assets/images/maps-and-flags.png", width: 20,),
+                                          Expanded(
+                                            child: Text("${list[index].resortService!.diaChi}",
+                                            style: const TextStyle(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.bold
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ))
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),

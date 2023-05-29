@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 class ResortService {
-  String diaChi, gia, maDV, moTa, sdt, tenDV, xepLoai;
   List<dynamic> anh;
+  String diaChi, gia, maDV, moTa, sdt, tenDV, xepLoai;
+
   ResortService({
     required this.anh,
     required this.diaChi,
@@ -50,15 +51,41 @@ class ResortServiceSnapshot {
     required this.documentReference,
   });
 
-  factory ResortServiceSnapshot.fromSnapshot(DocumentSnapshot docSnapGolfService) {
+  // hàm get để lấy thông tin cho trang cart
+  String getTenDV() {
+    return resortService.tenDV;
+  }
+  String getAnh() {
+    return resortService.anh[0];
+  }
+  double getGia(){
+    final price = double.parse(resortService.gia);
+    return price * getQuantity();
+  }
+
+  //tăng giảm số lượng
+  int quantity = 1;
+  int getQuantity() {
+    return quantity;
+  }
+  void increaseQuantity() {
+    quantity++;
+  }
+  void decreaseQuantity() {
+    if (quantity > 1) {
+      quantity--;
+    }
+  }
+
+
+  factory ResortServiceSnapshot.fromSnapshot(DocumentSnapshot docSnapResortService) {
     return ResortServiceSnapshot(
-      resortService: ResortService.fromJson(docSnapGolfService.data() as Map<String, dynamic>),
-      documentReference: docSnapGolfService.reference,
+      resortService: ResortService.fromJson(docSnapResortService.data() as Map<String, dynamic>),
+      documentReference: docSnapResortService.reference,
     );
   }
 
-  static Stream<List<ResortServiceSnapshot>> listResortService()
-  {
+  static Stream<List<ResortServiceSnapshot>> listResortService(){
     Stream<QuerySnapshot> streamQS = FirebaseFirestore.instance.collection("ResortService")
         .snapshots();
     Stream<List<DocumentSnapshot>> streamListDocSnap = streamQS.map(
@@ -66,4 +93,5 @@ class ResortServiceSnapshot {
     return streamListDocSnap.map((listDS) => listDS.map((ds) => ResortServiceSnapshot.fromSnapshot(ds)).toList()
     );
   }
+
 }

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
 import 'package:vinpearl_app/page_detail/page_golf_detail.dart';
 import 'package:vinpearl_app/service_data/golf_data.dart';
+
+import '../cart_page/cart_data.dart';
+import '../cart_page/cart_page.dart';
 
 class GolfPage extends StatefulWidget {
   const GolfPage({Key? key}) : super(key: key);
@@ -21,12 +25,17 @@ class _GolfPageState extends State<GolfPage> {
           actions: [
             GestureDetector(
               onTap: () {
-
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(),));
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: badges.Badge(
-                  position: badges.BadgePosition.topEnd(top: 1, end: 0),
+                  position: badges.BadgePosition.topEnd(top: -5, end: 0),
+                  badgeContent: Consumer<CartData>(
+                    builder: (context, value, child) {
+                      return Text("${value.cartItems.length}");
+                    },
+                  ),
                   badgeAnimation: const badges.BadgeAnimation.scale(),
                   child: const Icon(
                     Icons.shopping_cart,
@@ -87,7 +96,7 @@ class _GolfPageState extends State<GolfPage> {
                               flex: 3,
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(30),
-                                  child: Image.network(list[index].golfService.anh[0],width: 350, fit: BoxFit.cover)
+                                  child: Image.network(list[index].golfService.anh[0],width: 400, fit: BoxFit.cover)
                               ),
                             ),
                             Expanded(
@@ -101,33 +110,33 @@ class _GolfPageState extends State<GolfPage> {
                                       Text(
                                         list[index].golfService!.tenDV,
                                         style: const TextStyle(
-                                          fontSize: 15,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                      const SizedBox(height: 8,),
+                                      const SizedBox(height: 10,),
                                       Row(
                                         children: [
                                           const Icon(Icons.phone_rounded),
                                           const SizedBox(width: 5,),
-                                          Text(list[index].golfService!.sdt),
+                                          Text(list[index].golfService!.sdt, style: TextStyle(fontSize: 17),),
                                         ],
                                       ),
-                                      const SizedBox(height: 8,),
+                                      const SizedBox(height: 10,),
                                       Row(
                                         children: [
                                           Image.asset("assets/images/maps-and-flags.png", width: 20,),
                                           const SizedBox(width: 5,),
                                           Expanded(
-                                              child: Text(list[index].golfService!.diaChi, overflow: TextOverflow.ellipsis,))
+                                              child: Text(list[index].golfService!.diaChi, style: TextStyle(fontSize: 17), overflow: TextOverflow.ellipsis,))
                                         ],
                                       ),
-                                      const SizedBox(height: 8,),
+                                      const SizedBox(height: 10,),
                                       Row(
                                         children: [
                                           const Icon(Icons.mail_outlined),
                                           const SizedBox(width: 5,),
-                                          Text(list[index].golfService!.email)
+                                          Text(list[index].golfService!.email, style: TextStyle(fontSize: 17),)
                                         ],
                                       )
                                     ],

@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 class RestaurantService {
-  String diaChi, gia, maDV, moTa, openingTime, sdt, tenDV, xepLoai;
   List<dynamic> anh;
+  String diaChi, gia, maDV, moTa, openingTime, sdt, tenDV, xepLoai;
+
   RestaurantService({
     required this.anh,
     required this.diaChi,
@@ -30,7 +31,7 @@ class RestaurantService {
 
   factory RestaurantService.fromJson(Map<String, dynamic> map) {
     return RestaurantService(
-      anh: map['anh'] as List<dynamic>,
+      anh:map['anh'] as List<dynamic>,
       diaChi: map['diaChi'] as String,
       gia: map['gia'] as String,
       maDV: map['maDV'] as String,
@@ -52,6 +53,17 @@ class RestaurantServiceSnapshot {
     required this.documentReference,
   });
 
+  String getTenDV() {
+    return restaurantService.tenDV;
+  }
+  String getAnh() {
+    return restaurantService.anh[0];
+  }
+  double getGia(){
+    final price = double.parse(restaurantService.gia);
+    return price * getQuantity();
+  }
+
   factory RestaurantServiceSnapshot.fromSnapshot(DocumentSnapshot docSnapGolfService) {
     return RestaurantServiceSnapshot(
       restaurantService: RestaurantService.fromJson(docSnapGolfService.data() as Map<String, dynamic>),
@@ -67,5 +79,18 @@ class RestaurantServiceSnapshot {
             (queryInfo) => queryInfo.docs);
     return streamListDocSnap.map((listDS) => listDS.map((ds) => RestaurantServiceSnapshot.fromSnapshot(ds)).toList()
     );
+  }
+
+  int quantity = 1;
+  int getQuantity() {
+    return quantity;
+  }
+  void increaseQuantity() {
+    quantity++;
+  }
+  void decreaseQuantity() {
+    if (quantity > 1) {
+      quantity--;
+    }
   }
 }

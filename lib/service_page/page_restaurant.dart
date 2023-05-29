@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
 import 'package:vinpearl_app/page_detail/page_restaurant_detail.dart';
 import 'package:vinpearl_app/service_data/restaurant_data.dart';
+
+import '../cart_page/cart_data.dart';
+import '../cart_page/cart_page.dart';
 
 class RestaurantPage extends StatelessWidget {
   const RestaurantPage({Key? key}) : super(key: key);
@@ -16,12 +20,17 @@ class RestaurantPage extends StatelessWidget {
         actions: [
           GestureDetector(
             onTap: () {
-
+              Navigator.push(context, MaterialPageRoute(builder: (context) => CartPage(),));
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: badges.Badge(
-                position: badges.BadgePosition.topEnd(top: 1, end: 0),
+                position: badges.BadgePosition.topEnd(top: -5, end: 0),
+                badgeContent: Consumer<CartData>(
+                  builder: (context, value, child) {
+                    return Text("${value.cartItems.length}");
+                  },
+                ),
                 badgeAnimation: const badges.BadgeAnimation.scale(),
                 child: const Icon(
                   Icons.shopping_cart,
@@ -61,8 +70,13 @@ class RestaurantPage extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index){
                   return GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => RestaurantPageDetail(restaurantServiceSnapshot: list[index]),));
+                      Navigator.push(context, 
+                          MaterialPageRoute(
+                            builder: (context) => RestaurantPageDetail(
+                                restaurantServiceSnapshot: list[index]),));
                     },
+                    
+                    //Container chứa danh sách các dịch vụ nhà hàng
                     child: Container(
                       decoration: BoxDecoration(
                         boxShadow: [
@@ -80,52 +94,60 @@ class RestaurantPage extends StatelessWidget {
                       child: Column(
                         children: [
                           Expanded(
-                            flex: 3,
+                            flex: 5,
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(30),
-                                child: Image.network(list[index].restaurantService.anh[0], width: 350, fit: BoxFit.cover)
+                                child: Image.network(list[index].restaurantService.anh[0], width: 500, fit: BoxFit.cover)
                             ),
                           ),
                           Expanded(
-                              flex: 2,
-                              child: Container(
+                              flex: 3,
+                              child: Padding(
                                 padding: const EdgeInsets.all(7.0),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     // name Service
-                                    Text(
-                                      list[index].restaurantService.tenDV,
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
+                                    Expanded(
+                                      child: Text(
+                                        list[index].restaurantService.tenDV,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
 
                                     const SizedBox(height: 10,),
-                                    Row(
-                                      children: [
-                                        Image.asset("assets/images/clock.png", width: 20,),
-                                        const SizedBox(width: 5,),
-                                        Text(list[index].restaurantService.openingTime)
-                                      ],
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Image.asset("assets/images/clock.png", width: 20,),
+                                          const SizedBox(width: 5,),
+                                          Expanded(child: Text(list[index].restaurantService.openingTime, style: TextStyle(fontSize: 17), overflow: TextOverflow.ellipsis,))
+                                        ],
+                                      ),
                                     ),
                                     const SizedBox(height: 10,),
-                                    Row(
-                                      children: [
-                                        Image.asset("assets/images/maps-and-flags.png", width: 20,),
-                                        const SizedBox(width: 5,),
-                                        Expanded(
-                                            child: Text(list[index].restaurantService.diaChi))
-                                      ],
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          Image.asset("assets/images/maps-and-flags.png", width: 20,),
+                                          const SizedBox(width: 5,),
+                                          Expanded(
+                                              child: Text(list[index].restaurantService.diaChi,  style: TextStyle(fontSize: 17),overflow: TextOverflow.ellipsis,))
+                                        ],
+                                      ),
                                     ),
                                     const SizedBox(height: 10,),
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.phone_rounded),
-                                        const SizedBox(width: 5,),
-                                        Text(list[index].restaurantService.sdt),
-                                      ],
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.phone_rounded),
+                                          const SizedBox(width: 5,),
+                                          Text(list[index].restaurantService.sdt, style: TextStyle(fontSize: 17),),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),

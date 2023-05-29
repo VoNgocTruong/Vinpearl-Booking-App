@@ -1,6 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:vinpearl_app/service_data/resort_data.dart';
+import 'package:provider/provider.dart';
+
+import '../cart_page/cart_data.dart';
 
 class ResortPageDetail extends StatefulWidget {
   ResortServiceSnapshot resortServiceSnapshot;
@@ -11,7 +14,7 @@ class ResortPageDetail extends StatefulWidget {
 }
 
 class _ResortPageDetailState extends State<ResortPageDetail> {
-  ResortServiceSnapshot? resortServiceSnapshot;
+  late ResortServiceSnapshot resortServiceSnapshot;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +31,9 @@ class _ResortPageDetailState extends State<ResortPageDetail> {
                         enableInfiniteScroll: true,
                         autoPlay: true,
                       ),
-                      items: [
-                        "https://cf.bstatic.com/xdata/images/hotel/square600/418142776.webp?k=e313a78bc7c97efe03aa10423cd819b7147c621722bf078b93cf92427594b12c&o=&s=1",
-                        "https://cf.bstatic.com/xdata/images/hotel/max1024x768/37343067.jpg?k=4d1e431b5cb0e40c1c352bc7a7d1c204c57e581ae586fc24a465030cd7f84b2e&o=&hp=1",
-                        "https://cf.bstatic.com/xdata/images/hotel/max1024x768/164416341.jpg?k=73b5d341a6d1e78901defadef918198c456836ce697063502ca79843e6d0ceb2&o=&hp=1",
-                        "https://cf.bstatic.com/xdata/images/hotel/max1024x768/164416368.jpg?k=51d31521358431111c7037d72ee72d715c86c52e68551839efef7438a3ee1628&o=&hp=1"
-                        // Add more image URLs here
-                      ].map((item) {
+                      items:
+                        resortServiceSnapshot.resortService.anh
+                        .map((item) {
                         return Container(
                           child: ClipRRect(
                             borderRadius: const BorderRadius.all(Radius.circular(30)),
@@ -73,17 +72,24 @@ class _ResortPageDetailState extends State<ResortPageDetail> {
                     Row(
                       children: [
                         //Giá
-                        Text("${resortServiceSnapshot!.resortService.gia} vnđ", style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 17),),
-                        const SizedBox(width: 130,),
-                        const Icon(Icons.star, size: 16,),
-                        const Text("4.5", style: TextStyle(fontSize: 16),)
+                        Expanded(
+                          flex: 4,
+                          child: Text("${resortServiceSnapshot.resortService.gia} vnđ", style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 20),)),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Icon(Icons.star, size: 16, color: Colors.orangeAccent,),
+                              Text(resortServiceSnapshot.resortService.xepLoai, style: const TextStyle(fontSize: 16),)
+                            ],
+                          )
+                        )
                       ],
                     ),
                     const SizedBox(height: 10,),
                     Text(
-                      resortServiceSnapshot!.resortService.tenDV,
+                      resortServiceSnapshot.resortService.tenDV,
                       style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -93,7 +99,7 @@ class _ResortPageDetailState extends State<ResortPageDetail> {
                       children: [
                         const Icon(Icons.phone_rounded),
                         const SizedBox(width: 5,),
-                        Text(resortServiceSnapshot!.resortService.sdt, style: const TextStyle(fontSize: 16),),
+                        Text(resortServiceSnapshot.resortService.sdt, style: const TextStyle(fontSize: 17),),
                       ],
                     ),
                     const SizedBox(height: 10,),
@@ -101,13 +107,14 @@ class _ResortPageDetailState extends State<ResortPageDetail> {
                       children: [
                         Image.asset("assets/images/maps-and-flags.png", width: 20,),
                         const SizedBox(width: 5,),
-                        Text(resortServiceSnapshot!.resortService.diaChi, style: const TextStyle(fontSize: 16), overflow: TextOverflow.ellipsis,maxLines: 1)
+                        Expanded(
+                          child: Text(resortServiceSnapshot.resortService.diaChi, style: const TextStyle(fontSize: 17)))
                       ],
                     ),
+                    const SizedBox(height: 20,),
+                    const Text("Description", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     const SizedBox(height: 10,),
-                    const Text("Description", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                    const SizedBox(height: 10,),
-                    Text(resortServiceSnapshot!.resortService.moTa)
+                    Text(resortServiceSnapshot.resortService.moTa, style: TextStyle(fontSize: 16),textAlign: TextAlign.justify,)
                   ],
                 ),
               ),
@@ -117,23 +124,38 @@ class _ResortPageDetailState extends State<ResortPageDetail> {
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Add service to cart logic goes here
+                      final cartProvider = Provider.of<CartData>(context, listen: false);
+
+                      if(!cartProvider.isInCart(resortServiceSnapshot)){
+                        cartProvider.addItemToCart(resortServiceSnapshot);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Đã thêm vào giỏ hàng')
+                            )
+                        );
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text(
+                                'Dịch vụ đã có trong giỏ hàng')
+                            )
+                        );
+                      }
                     },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text("Add to cart ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-                        Icon(Icons.navigate_next_outlined,)
-                      ],
-                    ),
                     style: ElevatedButton.styleFrom(
                       elevation: 10,
+                      backgroundColor: Colors.orange[300],
                       shadowColor: Colors.grey,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30)
                       ),
-                      primary: Colors.orange[300],
-                      minimumSize: Size(220, 60),
+                      minimumSize: const Size(220, 60),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text("Add to cart ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                        Icon(Icons.navigate_next_outlined,)
+                      ],
                     ),
                   ),
                 ),

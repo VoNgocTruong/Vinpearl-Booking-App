@@ -1,6 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vinpearl_app/service_data/restaurant_data.dart';
+
+import '../cart_page/cart_data.dart';
 
 class RestaurantPageDetail extends StatefulWidget {
   RestaurantServiceSnapshot restaurantServiceSnapshot;
@@ -28,13 +31,7 @@ class _RestaurantPageDetailState extends State<RestaurantPageDetail> {
                         enableInfiniteScroll: true,
                         autoPlay: true,
                       ),
-                      items: [
-                        "https://statics.vinpearl.com/styles/image800x600/public/2021_08/nha-hang-lagoon-vinpearl-nha-trang-2_1628430565.jpg.webp?itok=HMJVlJEc",
-                        "https://statics.vinpearl.com/styles/image800x600/public/2021_08/nha-hang-lagoon-vinpearl-nha-trang-4_1628430567.jpg.webp?itok=cjzpo_8v",
-                        "https://statics.vinpearl.com/styles/image800x600/public/2021_08/nha-hang-lagoon-vinpearl-nha-trang-6_1628430569.jpg.webp?itok=T_BAk13M",
-                        "https://statics.vinpearl.com/styles/image800x600/public/2021_08/nha-hang-lagoon-vinpearl-nha-trang-3_1628430566.jpg.webp?itok=NHuylN8B"
-                        // Add more image URLs here
-                      ].map((item) {
+                      items: restaurantServiceSnapshot!.restaurantService.anh.map((item) {
                         return Container(
                           padding: const EdgeInsets.only(top: 10),
                           child: ClipRRect(
@@ -74,10 +71,18 @@ class _RestaurantPageDetailState extends State<RestaurantPageDetail> {
                     Row(
                       children: [
                         //Giá
-                        Text("${restaurantServiceSnapshot!.restaurantService.gia} vnđ", style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 17),),
-                        const SizedBox(width: 130,),
-                        const Icon(Icons.star, size: 16,),
-                        Text(restaurantServiceSnapshot!.restaurantService.xepLoai, style: const TextStyle(fontSize: 16),)
+                        Expanded(
+                          flex: 4,
+                          child: Text("${restaurantServiceSnapshot!.restaurantService.gia} vnđ", style: const TextStyle(color: Colors.orangeAccent, fontWeight: FontWeight.bold, fontSize: 22),)),
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            children: [
+                              const Icon(Icons.star, size: 16, color: Colors.orangeAccent,),
+                              Text(restaurantServiceSnapshot!.restaurantService.xepLoai, style: const TextStyle(fontSize: 16),)
+                          ],
+                          )
+                        )
                       ],
                     ),
                     const SizedBox(height: 10,),
@@ -93,7 +98,7 @@ class _RestaurantPageDetailState extends State<RestaurantPageDetail> {
                       children: [
                         Icon(Icons.phone_rounded),
                         SizedBox(width: 5,),
-                        Text(restaurantServiceSnapshot!.restaurantService.sdt, style: const TextStyle(fontSize: 16),),
+                        Text(restaurantServiceSnapshot!.restaurantService.sdt, style: const TextStyle(fontSize: 18),),
                       ],
                     ),
                     const SizedBox(height: 10,),
@@ -102,13 +107,13 @@ class _RestaurantPageDetailState extends State<RestaurantPageDetail> {
                         Image.asset("assets/images/maps-and-flags.png", width: 20,),
                         SizedBox(width: 5,),
                         Expanded(
-                            child: Text(restaurantServiceSnapshot!.restaurantService.diaChi, style: TextStyle(fontSize: 16),))
+                          child: Text(restaurantServiceSnapshot!.restaurantService.diaChi, style: TextStyle(fontSize: 18),))
                       ],
                     ),
+                    const SizedBox(height: 20,),
+                    const Text("Description", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
                     const SizedBox(height: 10,),
-                    const Text("Description", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
-                    const SizedBox(height: 10,),
-                    Text(restaurantServiceSnapshot!.restaurantService.moTa)
+                    Text(restaurantServiceSnapshot!.restaurantService.moTa, style: TextStyle(fontSize: 18), textAlign: TextAlign.justify,)
                   ],
                 ),
               ),
@@ -118,12 +123,27 @@ class _RestaurantPageDetailState extends State<RestaurantPageDetail> {
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Add service to cart logic goes here
+                      final cartProvider = Provider.of<CartData>(context, listen: false);
+
+                      if(!cartProvider.isInCart(restaurantServiceSnapshot)){
+                        cartProvider.addItemToCart(restaurantServiceSnapshot);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Đã thêm vào giỏ hàng')
+                            )
+                        );
+                      }else{
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(
+                                'Dịch vụ đã có trong giỏ hàng')
+                            )
+                        );
+                      }
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Add to cart ", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
+                        Text("Add to cart ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
                         Icon(Icons.navigate_next_outlined,)
                       ],
                     ),

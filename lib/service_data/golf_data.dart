@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 class GolfService {
-  String diaChi, email, gia, maDV, moTa, sdt, tenDV, xepLoai;
   List<dynamic> anh;
+  String diaChi, email, gia, maDV, moTa, sdt, tenDV, xepLoai;
+
   GolfService({
     required this.anh,
     required this.diaChi,
@@ -51,6 +54,31 @@ class GolfServiceSnapshot {
     required this.documentReference,
   });
 
+  String getTenDV() {
+    return golfService.tenDV;
+  }
+  String getAnh() {
+    return golfService.anh[0];
+  }
+  double getGia(){
+    final price = double.parse(golfService.gia);
+    return price * getQuantity();
+  }
+
+  //lấy số lượng
+  int quantity = 1;
+  int getQuantity() {
+    return quantity;
+  }
+  void increaseQuantity() {
+    quantity++;
+  }
+  void decreaseQuantity() {
+    if (quantity > 1) {
+      quantity--;
+    }
+  }
+
   factory GolfServiceSnapshot.fromSnapshot(DocumentSnapshot docSnapGolfService) {
     return GolfServiceSnapshot(
       golfService: GolfService.fromJson(docSnapGolfService.data() as Map<String, dynamic>),
@@ -67,4 +95,6 @@ class GolfServiceSnapshot {
     return streamListDocSnap.map((listDS) => listDS.map((ds) => GolfServiceSnapshot.fromSnapshot(ds)).toList()
     );
   }
+
+
 }
